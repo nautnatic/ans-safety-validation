@@ -1,0 +1,1 @@
+roslaunch arena_bringup start_arena_flatland.launch
