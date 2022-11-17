@@ -1,0 +1,25 @@
+services:
+  ros:
+    image: llalal/docker:arena-rosnav
+    container_name: ros
+    environment:
+      - DISPLAY=novnc:0.0
+    networks:
+      - x11
+    volumes:
+      - $REPO_PATH:/root/arena_ws/src/arena-rosnav
+
+  novnc:
+    image: theasp/novnc:latest
+    container_name: novnc
+    ports:
+      - 8080:8080
+    environment:
+      - DISPLAY_WIDTH=1920
+      - DISPLAY_HEIGHT=1080
+      - RUN_XTERM=no
+    networks:
+      - x11
+
+networks:
+  x11:
