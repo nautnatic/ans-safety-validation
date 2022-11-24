@@ -7,6 +7,9 @@ This disproof of a scientific statement (here: "The ANS is safe.") through a cou
 
 **Black-box** safety validation means that for this validation method, the interior of the ANS doesn't have to be known to validate its safety.
 
+# Simulation environment
+This project uses *Arena Rosnav* as a 2D simulation environment. Its setup and usage is described in the [simulation-environment](simulation-environment/README.md) subdirectory.
+
 # Abbreviations
 | Syntax      | Description |
 | ----------- | ----------- |
