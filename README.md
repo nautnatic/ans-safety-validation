@@ -1,7 +1,7 @@
 # Abstract
 The topic of this project is **Black-box safety validation of autonomous navigation systems through falsification**. This chapter should give some background.
 
-The quality criteria for an **Autonomous Navigation System (ANS)** don't only include an efficient navigation, but a safety guarantee as well. While efficiency can be calculated through the mean of many problem samples, the **safety validation** has to be done very differently, because only one self-inflicted counter example will cause the safety validation to fail completely.
+The quality criteria for an **Autonomous Navigation System (ANS)** don't only include an efficient navigation, but a safety guarantee as well. While efficiency can be calculated through the mean of many problem samples, the **safety validation** has to be done very differently, because only one self-inflicted counter example is enough to cause the safety validation to fail completely.
 
 This disproof of a scientific statement (here: "The ANS is safe.") through a counter example is called **falsification** and is used in this project.
 
