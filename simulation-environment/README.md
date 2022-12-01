@@ -1,7 +1,8 @@
 # Setup of Arena Rosnav simulation environment inside a Container
 ## Preconditions
-1. Docker runtime setup
-2. docker-compose and docker CLI installed on the development machine
+1. Operating system = Linux
+2. Docker runtime setup
+3. docker-compose and docker CLI installed on the development machine
 
 ## Clone arena-rosnav Git repository
 The following [repository](https://github.com/ignc-research/arena-rosnav) should be cloned to your machine. Https should be the preferred way to clone, because then the pull works from inside the container as well without setting up ssh.
@@ -11,13 +12,8 @@ The following [repository](https://github.com/ignc-research/arena-rosnav) should
 ## Start & stop of the containers
 The environment consists of 2 containers: The *ros* container contains the actual runtime environment. The *novnc* container provides a web GUI on the following [link](http://localhost:8080/vnc.html). 
 
-The containers can be started through the attached docker-compose by executing the following command in the directory with the docker-compose:
-	
-	docker-compose up -d
-
-To stop the containers execute the following command:
-
-	docker-compose down -d
+The containers can be started by executing the script *setup-environment.sh*, which starts the containers as defined in the *docker-compose.yaml*
+To teardown the containers, execute *teardown-environment.sh*
 
 However, before running the command you need to export the environment variable PEPO_PATH either manually or automatically with *direnv*. REPO_PATH should be set to the path of the arena-rosnav repository.
 
