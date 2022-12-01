@@ -4,11 +4,13 @@ services:
     container_name: ros
     environment:
       - DISPLAY=novnc:0.0
-      - ARENA_ROSNAV_MOUNTED=$ARENA_ROSNAV_MOUNTED
+      - ARENA_ROSNAV_REPO=$ARENA_ROSNAV_REPO_MOUNTED
+      - ANS_REPO=$ANS_REPO_MOUNTED
     networks:
       - x11
     volumes:
-      - $ARENA_ROSNAV:$ARENA_ROSNAV_MOUNTED
+      - $ARENA_ROSNAV_REPO:$ARENA_ROSNAV_REPO_MOUNTED
+      - $ANS_REPO:$ANS_REPO_MOUNTED
 
   novnc:
     image: theasp/novnc:latest
