@@ -72,23 +72,5 @@ A more advanced example of the launch command would be:
 
 	roslaunch arena_bringup start_arena_flatland.launch local_planner:="rlca" map_file:="map1"  disable_scenario:="false" scenario_file:="eval/obstacle_map1_obs20.json"
 
-# Setup of environment on Ubuntu 20+
-
-	# install poetry
-	curl -sSL https://install.python-poetry.org | python3 -
-
-	# install nlopt
-	git clone https://github.com/stevengj/nlopt
-	cd nlopt
-	mkdir build
-	cd build
-	cmake ..
-	make
-	sudo make install
-
-
-
-
-
 # Error handling
 Common errors and their solution are described in the repository at the following [link](https://github.com/ignc-research/arena-rosnav/blob/local_planner_subgoalmode/docs/guide.md#common-error-handling).

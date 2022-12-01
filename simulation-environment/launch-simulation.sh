@@ -1,8 +1,5 @@
 LAUNCH_FILE=start_arena_flatland.launch
 
-# cd $ARENA_ROSNAV_REPO && rosws update && source $HOME/.zshrc && cd ../.. && catkin_make -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/usr/bin/python3 && source devel/setup.zsh
-
-
 roslaunch arena_bringup $LAUNCH_FILE \
 	# true/false
 	train_mode:=false
