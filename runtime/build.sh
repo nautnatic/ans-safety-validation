@@ -1,0 +1,1 @@
+docker build -t ros ${PROJECT_DIR}/runtime
