@@ -1,1 +1,1 @@
-docker build -t ros ${PROJECT_DIR}/runtime
+docker build -t arena ${PROJECT_DIR}/runtime

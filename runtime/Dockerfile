@@ -1,59 +1,83 @@
-ARG FROM_IMAGE=ros:foxy
-ARG OVERLAY_WS=/opt/ros/overlay_ws
+# use osrf/ros instead of ros because it has desktop environment
+# use n
+FROM osrf/ros:noetic-desktop-full
+SHELL ["/bin/bash", "-c"]
 
-# multi-stage for caching
-FROM $FROM_IMAGE AS cacher
+# install apt packages
+RUN apt-get -y update \
+    && apt-get install -y \
+    apt-utils \
+    software-properties-common \
+    git \
+    wget \
+    ros-noetic-tf2 \
+    ros-noetic-tf \
+    ros-noetic-tf2-geometry-msgs \
+    ffmpeg \
+    python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential \
+    libsm6 \
+    libxext6  \
+    && add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get -y update \
+    && apt-get -y install \
+    libopencv-dev \
+    liblua5.2-dev \
+    screen \
+    python3 \
+    python3-dev \
+    libpython3-dev \
+    python3-catkin-pkg-modules \
+    python3-rospkg-modules \
+    python3-empy \
+    python3-setuptools \
+    ros-noetic-navigation \
+    ros-noetic-teb-local-planner \
+    ros-noetic-mpc-local-planner \
+    libarmadillo-dev \
+    ros-noetic-nlopt \
+    python3 \
+    python3-pip \
+    tk \
+    ros-noetic-turtlebot3-description \
+    ros-noetic-turtlebot3-navigation \
+    python-tk \
+    python3-tk \
+    tk-dev
 
-# clone overlay source
-ARG OVERLAY_WS
-WORKDIR $OVERLAY_WS/src
-RUN echo "\
-repositories: \n\
-  ros2/demos: \n\
-    type: git \n\
-    url: https://github.com/ros2/demos.git \n\
-    version: ${ROS_DISTRO} \n\
-" > ../overlay.repos
-RUN vcs import ./ < ../overlay.repos
+# install python packages
+RUN pip3 install poetry \
+    && pip3 install --upgrade pip
+# TODO: install dependencies with poetry / pipenv
+# poetry shell && poetry install
 
-# copy manifests for caching
-WORKDIR /opt
-RUN mkdir -p /tmp/opt && \
-    find ./ -name "package.xml" | \
-      xargs cp --parents -t /tmp/opt && \
-    find ./ -name "COLCON_IGNORE" | \
-      xargs cp --parents -t /tmp/opt || true
+# install PyEnv
+WORKDIR /root/
+RUN git clone --depth=1 https://github.com/pyenv/pyenv.git .pyenv
+ENV PYENV_ROOT="/root/.pyenv"
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
+RUN echo 'eval "$(pyenv init -)"' >> /root/.bashrc
+RUN sed -Ei -e '/^([^#]|$)/ {a export PYENV_ROOT="$HOME/.pyenv" \nexport PATH="$PYENV_ROOT/bin:$PATH"' -e ':a' -e '$!{n;ba};}' /root/.profile
+RUN echo 'eval "$(pyenv init --path)"' >> /root/.profile
 
-# multi-stage for building
-FROM $FROM_IMAGE AS builder
+# make src directory for packages in catkin workspace
+RUN mkdir -p /root/src/
 
-# install overlay dependencies
-ARG OVERLAY_WS
-WORKDIR $OVERLAY_WS
-COPY --from=cacher /tmp/$OVERLAY_WS/src ./src
-RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    apt-get update && rosdep install -y \
-      --from-paths \
-        src/ros2/demos/demo_nodes_cpp \
-        src/ros2/demos/demo_nodes_py \
-      --ignore-src \
-    && rm -rf /var/lib/apt/lists/*
+# add to .bashrc to source ros setup when executing bash directly
+RUN echo -e "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
+# RUN echo -e "source /root/devel/setup.bash" >> /root/.bashrc
 
-# build overlay source
-COPY --from=cacher $OVERLAY_WS/src ./src
-ARG OVERLAY_MIXINS="release"
-RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
-    colcon build \
-      --packages-select \
-        demo_nodes_cpp \
-        demo_nodes_py \
-      --mixin $OVERLAY_MIXINS
+# install ros dependencies
+WORKDIR /root/src
+COPY .rosinstall ./
+RUN rosws update
 
-# source entrypoint setup
-ENV OVERLAY_WS $OVERLAY_WS
-RUN sed --in-place --expression \
-      '$isource "$OVERLAY_WS/install/setup.bash"' \
-      /ros_entrypoint.sh
+# build existing packages to cache them
+WORKDIR /root/
+RUN source /root/.bashrc \
+    && source /opt/ros/noetic/setup.sh \
+    && catkin_make
 
-# run launch file
-CMD ["ros2", "launch", "demo_nodes_cpp", "talker_listener.launch.py"]
+# build new packages and launch ros launch file
+CMD catkin_make \
+    && source /root/devel/setup.sh \
+    && roslaunch ${LAUNCH_PACKAGE} ${LAUNCH_FILE} ${ADDITIONAL_LAUNCH_PARAMS}

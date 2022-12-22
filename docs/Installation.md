@@ -1,14 +1,21 @@
 # Installation
-In this project the application is run in a Docker container.
+In this project the application is run in a Docker container. To be able to 
+customize the contents of the Docker image, not the Docker image itself, but the
+Dockerfile is provided. 
 
-## Create Catkin WS
+## Build Docker image
+You can customize the Dockerfile if necessary and then build the image by 
+executing *build.sh* in the runtime directory. This creates a Docker image called *ros*.
 
+## Open shell inside the ros container
+To enter the shell in the ros container, execute the *shell.sh* script in the runtime directory.
 
-Clone repo in any catkin ws or create new catkin ws
+## Launch a ros launch file
+Execute the *launch.sh* script in the runtime directory, which uses the launch settings defined in the environment variables.
 
-```
-git clone git@github.com:Arena-Rosnav/arena-rosnav.git
-```
+---
+
+# Installation documentation for non docker builds
 
 Change into dir
 

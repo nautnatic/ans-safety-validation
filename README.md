@@ -11,19 +11,20 @@ This disproof of a scientific statement (here: "The ANS is safe.") through a cou
 ## Installation
 The installation process is documented [here](docs/Installation.md).
 
-## Simulation environment
-This project uses *Arena Rosnav* as a 2D simulation environment. Its setup and usage is described in the [simulation-environment](simulation-environment/README.md) subdirectory.
+## Arena Rosnav
+This project is based on *Arena Rosnav*. Its usage is described in [simulation-environment](docs/Arena.md)
 
 ## Abbreviations
-| Syntax      | Description |
-| ----------- | ----------- |
-| ANS		   | Autonomous Navigation system |
+| Syntax | Description                  |
+|--------|------------------------------|
+| ANS    | Autonomous Navigation System |
 
-## Related papers
+## Resources
+### Related papers
 * [Towards simulation-based verification of autonomous navigation systems](https://www.sciencedirect.com/science/article/abs/pii/S092575352030196X)
 * [Arena-Rosnav: Towards Deployment of Deep-Reinforcement-Learning-Based Obstacle Avoidance into Conventional Autonomous Navigation Systems](https://arxiv.org/abs/2104.03616)
 * [A Survey of Algorithms for Black-Box Safety Validation of Cyber-Physical Systems](https://dl.acm.org/doi/pdf/10.1613/jair.1.12716)
 
-## Used third party repos
+### Used third party repos
 * [Arena Bench Github](https://github.com/ignc-research/arena-rosnav)
 * [Arena Bench Docs](https://github.com/ignc-research/arena-rosnav)
