@@ -4,7 +4,7 @@ The topic of this project is **Black-box safety validation of autonomous navigat
 
 The quality criteria for an **Autonomous Navigation System (ANS)** don't only include an efficient navigation, but a safety guarantee as well. While efficiency can be calculated through the mean of many problem samples, the **safety validation** has to be done very differently, because only one self-inflicted counter example is enough to cause the safety validation to fail completely.
 
-This disproof of a scientific statement (here: "The ANS is safe.") through a counter example is called **falsification** and is used in this project.
+This disproof of a scientific statement (here: "The ANS is safe.") through a counter example is called **falsification** and is the method used in this project.
 
 **Black-box** safety validation means that for this validation method, the interior of the ANS doesn't have to be known to validate its safety.
 
@@ -12,7 +12,7 @@ This disproof of a scientific statement (here: "The ANS is safe.") through a cou
 The installation process is documented [here](docs/Installation.md).
 
 ## Arena Rosnav
-This project is based on *Arena Rosnav*. Its usage is described in [simulation-environment](docs/Arena.md)
+This project is based on *Arena Rosnav*. Its usage is described [here](docs/Usage.md).
 
 ## Abbreviations
 | Syntax | Description                  |
