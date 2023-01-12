@@ -3,7 +3,7 @@ services:
     image: arena
     container_name: arena
     environment:
-      - DISPLAY=
+      - DISPLAY
       - QT_X11_NO_MITSHM=1
       - LAUNCH_PACKAGE=$LAUNCH_PACKAGE
       - LAUNCH_FILE=$LAUNCH_FILE
@@ -13,4 +13,3 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # map arena-bench repo as ros package
       - $ARENA_BENCH_REPO:/root/src/arena-rosnav
-#    command: tail -F anything

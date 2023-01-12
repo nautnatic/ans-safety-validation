@@ -1,54 +1,15 @@
 # Installation
-In this project the application is run in a Docker container. To be able to 
-customize the contents of the Docker image, not the Docker image itself, but the
-Dockerfile is provided. 
+In the following the installation for this project is described.
 
-## Build Docker image
-You can customize the Dockerfile if necessary and then build the image by 
-executing *build.sh* in the runtime directory. This creates a Docker image called *ros*.
+The following preconditions need to be fulfilled before using this project:
 
-## Open shell inside the ros container
-To enter the shell in the ros container, execute the *shell.sh* script in the runtime directory.
+* Linux as operating system
+* Docker installed
+* docker-compose installed
+* direnv installed (optional)
 
-## Launch a ros launch file
-Execute the *launch.sh* script in the runtime directory, which uses the launch settings defined in the environment variables.
+All the scripts are provided as shell scripts, so you need to run on Linux to execute them. Also this setup was only tested on Linux (Ubuntu 22.04).
 
----
+The application is run inside a Docker container, so Docker needs to be installed to build and run the docker container. Also, docker-compose is used to write the run configuration in a readable way, so it needs to be installed as well.
 
-# Installation documentation for non docker builds
-
-Change into dir
-
-```
-cd arena-rosnav
-```
-
-Ros install
-
-```
-rosws update
-```
-
-Install python pkgs, you need poetry for this
-
-```
-poetry shell && poetry install
-```
-
-Install stable baselines
-
-```
-cd ../forks/stable-baselines3 && pip install -e .
-```
-
-Build catkin
-
-```
-cd ../../.. && catkin_make
-```
-
-Finished!
-
-#### TODO
-
-Everything
+As you need to set environment variables before running the shell scripts, I recommend using direnv, which is a tool to set environment variables automatically depending on the directory you are in.
