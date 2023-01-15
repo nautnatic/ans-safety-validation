@@ -15,3 +15,19 @@ Additionally, the script takes care of showing the GUI on the host operating sys
 
 ## Execute shell inside the container
 To execute a bash shell inside the running container execute the [shell.sh](../runtime/shell.sh) script.
+
+## Common errors
+### Use correct arena-rosnav repository
+Make sure to use the correct Arena Rosnav repository: *git@github.com:Arena-Rosnav/arena-bench.git*. This old, incorrect one is *git@github.com:Arena-Rosnav/arena-bench.git*. The error I got was:
+
+```
+arena    | Multiple packages found with the same name "observations":
+arena    | - arena-rosnav/arena_navigation/observations
+arena    | - utils/arena-utils/observations
+arena    | Multiple packages found with the same name "plan_visualization":
+arena    | - arena-rosnav/utils/plan_visualization
+arena    | - utils/arena-utils/plan_visualization
+arena    | Multiple packages found with the same name "sensor_simulator":
+arena    | - arena-rosnav/arena_navigation/arena_local_planer/model_based/sensor_simulator
+arena    | - utils/arena-utils/sensor_simulator
+```
