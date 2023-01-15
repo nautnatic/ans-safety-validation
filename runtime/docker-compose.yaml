@@ -12,4 +12,6 @@ services:
       # to show GUI
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # map arena-bench repo as ros package
-      - $ARENA_BENCH_REPO:/root/src/arena-rosnav
+      - $ARENA_BENCH_REPO:/home/user/src/arena-rosnav
+    # uncomment this to just start container and wait instead of launching simulation
+#    command: tail -f /dev/null

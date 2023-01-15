@@ -1,9 +1,20 @@
 # use osrf/ros instead of ros because it has desktop environment
-# use n
 FROM osrf/ros:noetic-desktop-full
 SHELL ["/bin/bash", "-c"]
 
+# configure user
+# source: https://jtreminio.com/blog/running-docker-containers-as-current-host-user/
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG USER_NAME=user
+# environment variable for user home directory is required
+ENV HOME=/home/$USER_NAME
+RUN groupadd -g ${GROUP_ID} $USER_NAME &&\
+    useradd -l -u ${USER_ID} -g $USER_NAME $USER_NAME &&\
+    install -d -m 0755 -o $USER_NAME -g $USER_NAME $HOME
+
 # install apt packages
+USER root
 RUN apt-get -y update \
     && apt-get install -y \
     apt-utils \
@@ -44,6 +55,8 @@ RUN apt-get -y update \
     python3-tk \
     tk-dev
 
+USER $USER_NAME
+
 # install python packages
 RUN pip3 install poetry \
     && pip3 install --upgrade pip
@@ -51,33 +64,33 @@ RUN pip3 install poetry \
 # poetry shell && poetry install
 
 # install PyEnv
-WORKDIR /root/
-RUN git clone --depth=1 https://github.com/pyenv/pyenv.git .pyenv
-ENV PYENV_ROOT="/root/.pyenv"
+WORKDIR $HOME
+RUN git clone --depth=1 https://github.com/pyenv/pyenv.git $HOME/.pyenv
+ENV PYENV_ROOT="$HOME/.pyenv"
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
-RUN echo 'eval "$(pyenv init -)"' >> /root/.bashrc
-RUN sed -Ei -e '/^([^#]|$)/ {a export PYENV_ROOT="$HOME/.pyenv" \nexport PATH="$PYENV_ROOT/bin:$PATH"' -e ':a' -e '$!{n;ba};}' /root/.profile
-RUN echo 'eval "$(pyenv init --path)"' >> /root/.profile
+RUN export PATH="$PYENV_ROOT/bin:$PATH" >> $HOME/.bashrc \
+    eval "$(pyenv init -)" >> $HOME/.bashrc
 
 # make src directory for packages in catkin workspace
-RUN mkdir -p /root/src/
+RUN mkdir -p $HOME/src/
 
 # add to .bashrc to source ros setup when executing bash directly
-RUN echo -e "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-# RUN echo -e "source /root/devel/setup.bash" >> /root/.bashrc
+RUN echo -e "source /opt/ros/noetic/setup.bash" >> $HOME/.bashrc
+# RUN echo -e "source $HOME/devel/setup.bash" >> $HOME/.bashrc
 
 # install ros dependencies
-WORKDIR /root/src
+WORKDIR $HOME/src
 COPY .rosinstall ./
 RUN rosws update
 
 # build existing packages to cache them
-WORKDIR /root/
-RUN source /root/.bashrc \
+WORKDIR $HOME
+RUN source $HOME/.bashrc \
     && source /opt/ros/noetic/setup.sh \
     && catkin_make
 
 # build new packages and launch ros launch file
+WORKDIR $HOME
 CMD catkin_make \
-    && source /root/devel/setup.sh \
+    && source $HOME/devel/setup.sh \
     && roslaunch ${LAUNCH_PACKAGE} ${LAUNCH_FILE} ${ADDITIONAL_LAUNCH_PARAMS}
