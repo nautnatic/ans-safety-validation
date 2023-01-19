@@ -56,12 +56,16 @@ RUN apt-get -y update \
     tk-dev
 
 USER $USER_NAME
+WORKDIR $HOME
+ENV PATH="/home/user/.local/bin:$PATH"
 
 # install python packages
 RUN pip3 install poetry \
     && pip3 install --upgrade pip
 # TODO: install dependencies with poetry / pipenv
-# poetry shell && poetry install
+COPY src/poetry.lock .
+COPY src/pyproject.toml .
+RUN poetry shell && poetry install
 
 # install PyEnv
 WORKDIR $HOME
@@ -80,7 +84,7 @@ RUN echo -e "source /opt/ros/noetic/setup.bash" >> $HOME/.bashrc
 
 # install ros dependencies
 WORKDIR $HOME/src
-COPY .rosinstall ./
+COPY src/.rosinstall ./
 RUN rosws update
 
 # build existing packages to cache them
@@ -88,6 +92,9 @@ WORKDIR $HOME
 RUN source $HOME/.bashrc \
     && source /opt/ros/noetic/setup.sh \
     && catkin_make
+
+# install stable baselines
+# cd ../forks/stable-baselines3 && pip install -e .
 
 # build new packages and launch ros launch file
 WORKDIR $HOME
