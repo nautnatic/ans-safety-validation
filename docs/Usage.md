@@ -7,7 +7,7 @@ You can execute [this](../runtime/build.sh) shell script to build the image. In 
 When running a container of this image without overwriting the command, the default command is to execute a launch script according to the environment variables: LAUNCH_PACKAGE, LAUNCH_FILE, ADDITIONAL_LAUNCH_PARAMS, which need to be provided in the run command.
 
 ## Run container
-To launch the environment, run a container of the created image by executing [this](../runtime/launch.sh) shell script.
+To launch the environment, run a container of the created image by executing [this](../runtime/run.sh) shell script.
 
 In this shell script, a container of the previously built image is created. The environment variables LAUNCH_PACKAGE, LAUNCH_FILE, ADDITIONAL_LAUNCH_PARAMS are passed in to configure which application to launch.
 

@@ -1,5 +1,4 @@
 # runs the trained agent
-
 sudo xhost +local:root
 
 export LAUNCH_PACKAGE=arena_bringup

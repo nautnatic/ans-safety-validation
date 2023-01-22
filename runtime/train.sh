@@ -1,6 +1,4 @@
 # start the environment in training mode
-# to actually start the training, execute
-
 sudo xhost +local:root
 
 export LAUNCH_PACKAGE=arena_bringup
