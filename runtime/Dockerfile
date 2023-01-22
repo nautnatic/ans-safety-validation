@@ -1,9 +1,8 @@
 # use osrf/ros instead of ros because it has desktop environment
-# use the filesystem of the host
 FROM osrf/ros:noetic-desktop-full
 SHELL ["/bin/bash", "-c"]
 
-# configure user
+# configure user to avoid permission problems with host in volumes
 # source: https://jtreminio.com/blog/running-docker-containers-as-current-host-user/
 ARG USER_ID=1000
 ARG GROUP_ID=1000
@@ -71,7 +70,7 @@ RUN source $HOME/.bashrc \
 
 # install pip dependencies of stable baselines (has to be installed as ros dep before)
 WORKDIR $HOME/src/utils/stable-baselines3
-# does this install torch double?
+# TODO: does this install torch double?
 RUN pip install -e .
 
 # build new packages and launch ros launch file
