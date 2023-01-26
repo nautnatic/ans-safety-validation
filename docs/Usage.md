@@ -1,4 +1,9 @@
 # Usage
+## Configure global settings as environment variables through .envrc
+Global settings are set as environment variables. I use *direnv* for automatically loading the environment variables, when I'm in the project directory from a `.envrc` file in the root directory of the project. As the file also contains environment-specific setting like local paths, it is not part of the repository. Instead, a template for the .envrc called [`.envrc-template`](../.envrc-template) is committed, which contains placeholders. 
+
+When direnv detects changes in the `.envrc` file, it requests to confirm the changes. To do that execute `direnv allow`. Now, you can use the environment variables in all terminal sessions started from within the root directory or one of its sub directories.
+
 ## Build image
 Everything that doesn't need to be redone when modifying this projects behavior, should be built into the image. This includes the fetching of dependencies and an initial build to cache the built dependencies and be able to build faster when using the image later.
 
