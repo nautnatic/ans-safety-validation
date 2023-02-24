@@ -1,4 +1,8 @@
 tmp
-log/
-build/
+
+# direnv
 .envrc
+
+# IntelliJ
+*.iml
+.idea/
