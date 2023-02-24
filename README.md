@@ -6,13 +6,13 @@ The quality criteria for an **Autonomous Navigation System (ANS)** don't only in
 
 This disproof of a scientific statement (here: "The ANS is safe.") through a counter example is called **falsification** and is the method used in this project.
 
-**Black-box** safety validation means that for this validation method, the interior of the ANS doesn't have to be known to validate its safety.
+**Black-box** validation means that the validation is done without information about the internals of the ANS. This is useful, because information about the internal behavior is often not available and the method should work in those cases as well.
 
 ## Installation
 The installation process is documented [here](docs/Installation.md).
 
-## Arena Rosnav
-This project is based on *Arena Rosnav*. Its usage is described [here](docs/Usage.md).
+## Usage
+The usage is described [here](docs/Usage.md).
 
 ## Abbreviations
 | Syntax | Description                  |

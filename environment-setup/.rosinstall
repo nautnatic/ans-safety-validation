@@ -1,0 +1,4 @@
+- git:
+    local-name: flatland
+    uri: https://github.com/avidbots/flatland.git
+    version: 1.3.3

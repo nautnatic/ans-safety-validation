@@ -1,6 +1,12 @@
+# defines if the docker build command should use the cached layers from before
+export USE_IMAGE_BUILD_CACHE=true
+# tag attached to the built docker image
+export DOCKER_IMAGE_TAG=ans-env:latest
+# name of the docker container launched by the run-container.sh script
+export DOCKER_CONTAINER_NAME=ans-env
+
 # host path to the arena bench repository
 export ARENA_BENCH_REPO=/opt/arena-bench
-
 # path to this projects root directory (define other paths relatively to this path)
 export PROJECT_DIR=$(pwd)
 
