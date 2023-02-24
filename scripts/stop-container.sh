@@ -1,0 +1,1 @@
+docker compose -f ../environment-setup/docker-compose.yaml down
