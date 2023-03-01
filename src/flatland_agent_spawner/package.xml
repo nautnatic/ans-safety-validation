@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>flatland_agent_spawner</name>
+  <version>0.0.0</version>
+  <description>The flatland_agent_spawner package</description>
+
+  <maintainer email="user@todo.todo">user</maintainer>
+  <license>BSD</license>
+  <!-- <url type="website">http://wiki.ros.org/flatland_agent_spawner</url> -->
+  <url type="repository">https://github.com/nautnatic/ans-safety-validation.git</url>
+  <author email="michael.lauter@student.uni-augsburg.de">Michael Lauter</author>
+
+  <!-- **************************************************************************** -->
+  <!-- DEPENDENCIES -->
+  <!-- catkin packages or system dependencies -->
+
+  <!-- Packages that are both build and exec dependencies (depend) -->
+  <!--   <depend>roscpp</depend> -->
+  <!-- Build tool packages (buildtool_depend) -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <!-- Packages needed at compile time (build_depend) -->
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <!-- Packages needed to build against this package (build_export_depend) -->
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <!-- Packages needed at runtime (exec_depend) -->
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <!-- Packages needed for testing (test_depend) -->
+  <!--   <test_depend>gtest</test_depend> -->
+  <!-- Packages needed for building documentation (doc_depend) -->
+  <!--   <doc_depend>doxygen</doc_depend> -->
+
+  <!-- **************************************************************************** -->
+  <!-- OTHER EXPORTS -->
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+
+</package>
