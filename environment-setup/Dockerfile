@@ -19,13 +19,21 @@ USER root
 RUN echo "${USER_NAME}            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # add apt repos and install apt packages
+# other: wget ffmpeg
 USER root
 RUN apt-get -y update && \
     # install apt packages
     apt-get install -y \
-    git \
-    vim \
-    liblua5.3-dev \
+    git vim \
+    liblua5.3-dev libsm6 libxext6 libopencv-dev liblua5.2-dev screen libarmadillo-dev \
+    ros-noetic-tf2 ros-noetic-tf ros-noetic-tf2-geometry-msgs \
+    ros-noetic-navigation ros-noetic-teb-local-planner ros-noetic-mpc-local-planner \
+    ros-noetic-nlopt ros-noetic-turtlebot3-description ros-noetic-turtlebot3-navigation \
+    python3-rospy \
+    python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential \
+    python3 python3-dev python3-pip libpython3-dev python3-catkin-pkg-modules python3-rospkg-modules \
+    python3-empy python3-setuptools python-tk python3-tk \
+    tk tk-dev \
     # cleanup
     && apt-get clean && apt-get autoremove
 
