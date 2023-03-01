@@ -43,8 +43,8 @@ class Pedestrian:
 
 if __name__ == '__main__':
     rospy.init_node('flatland_agent_spawner')
-
     service_client_registry = ServiceClientRegistry()
+
     pedestrian_1 = Pedestrian(service_client_registry, "pedestrian1")
 
     initial_pose = Pose2D(x=0.0, y=0.0, theta=0.0)
