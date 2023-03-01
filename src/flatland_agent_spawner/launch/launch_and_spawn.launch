@@ -5,25 +5,14 @@
   </include>
 
   <!-- create new node for script -->
-  <!-- <rosparam command="load" file="$(find my_package)/config/pedestrians.yaml" /> -->
-  <!-- <node name="spawn_pedestrians" pkg="" type="spawn_pedestrians.py" output="screen">
-    <rosparam param="my_param" />
-  </node> -->
+  <node name="spawn_pedestrians" pkg="flatland_agent_spawner" type="spawn_pedestrians.py" output="screen">
+  <!-- <rosparam command="load" file="$(find flatland_agent_spawner)/config/turtlebot_model.yaml" /> -->
+  </node>
 
   <!-- spawn pedestrian with ros service -->
-  <node name="spawn_model" pkg="rosservice" type="rosservice" args="call --wait /spawn_model &quot;{
+  <!-- <node name="spawn_model" pkg="rosservice" type="rosservice" args="call -\-wait /spawn_model &quot;{
     yaml_path: '$(find flatland_agent_spawner)/config/turtlebot_model.yaml',
     name: 'turtlebot1',
     ns: '',
-    pose: {x: 0.0, y: 0.0, theta: 0.0}}&quot;" />
-  <node name="spawn_model_2" pkg="rosservice" type="rosservice" args="call --wait /spawn_model &quot;{
-    yaml_path: '$(find flatland_agent_spawner)/config/turtlebot_model.yaml',
-    name: 'turtlebot2',
-    ns: '',
-    pose: {x: 10.0, y: 0.0, theta: 0.0}}&quot;" />
-  <node name="spawn_model_3" pkg="rosservice" type="rosservice" args="call --wait /spawn_model &quot;{
-    yaml_path: '$(find flatland_agent_spawner)/config/turtlebot_model.yaml',
-    name: 'turtlebot3',
-    ns: '',
-    pose: {x: 20.0, y: 0.0, theta: 0.0}}&quot;" />
+    pose: {x: 0.0, y: 0.0, theta: 0.0}}&quot;" /> -->
 </launch>
