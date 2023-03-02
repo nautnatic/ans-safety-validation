@@ -13,6 +13,6 @@
   <!-- <node name="spawn_model" pkg="rosservice" type="rosservice" args="call -\-wait /spawn_model &quot;{
     yaml_path: '$(find flatland_agent_spawner)/config/turtlebot_model.yaml',
     name: 'turtlebot1',
-    ns: '',
+    ns: 'test',
     pose: {x: 0.0, y: 0.0, theta: 0.0}}&quot;" /> -->
 </launch>

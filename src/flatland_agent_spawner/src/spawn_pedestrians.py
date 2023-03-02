@@ -25,7 +25,7 @@ class Pedestrian:
             yaml_path="/home/user/src/flatland_agent_spawner/config/turtlebot_model.yaml",
             # only alphanumerics
             name=self.model_name,
-            ns="",
+            ns="pedestrians",
             pose=initialPose
         )
 
