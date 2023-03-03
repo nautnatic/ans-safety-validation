@@ -25,7 +25,8 @@ class Pedestrian:
             yaml_path="/home/user/src/flatland_agent_spawner/config/turtlebot_model.yaml",
             # only alphanumerics
             name=self.model_name,
-            ns="pedestrians",
+            # throws warning if empty, namespaces of all pedestrians have to be different
+            ns="pedestrians_" + self.model_name,
             pose=initialPose
         )
 
@@ -45,11 +46,14 @@ if __name__ == '__main__':
     rospy.init_node('flatland_agent_spawner')
     service_client_registry = ServiceClientRegistry()
 
-    pedestrian_1 = Pedestrian(service_client_registry, "pedestrian1")
+    pedestrian_names = ["pedestrian1", "pedestrian2"]
+    pedestrians = [ Pedestrian(service_client_registry, ped_name) for ped_name in pedestrian_names ]
 
     initial_pose = Pose2D(x=0.0, y=0.0, theta=0.0)
-    pedestrian_1.spawn(initial_pose)
+    for pedestrian in pedestrians:
+        pedestrian.spawn(initial_pose)
 
+	# rate in Hertz
     rate = rospy.Rate(2)
     toggle = False
 
@@ -59,7 +63,7 @@ if __name__ == '__main__':
         else:
             new_pose = Pose2D(x=-10.0, y=0.0, theta=0.0)
 
-        pedestrian_1.move_to_pose(new_pose)
+        pedestrians[0].move_to_pose(new_pose)
         # rospy.loginfo("moved to new pos")
 
         toggle = not toggle
