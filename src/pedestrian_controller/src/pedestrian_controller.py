@@ -44,22 +44,23 @@ class Pedestrian:
             rospy.logerr("Failed to move model: %s", response.message)
             exit()
 
+
 if __name__ == '__main__':
     rospy.init_node('pedestrian_controller')
 
     # get params
-    model_path = rospy.get_param("/pedestrian_controller/pedestrian_model_path")
+    model_path: str = rospy.get_param("/pedestrian_controller/pedestrian_model_path")
+    pedestrian_count: int = rospy.get_param("/pedestrian_controller/pedestrian_count")
 
     service_client_registry = ServiceClientRegistry()
-
-    pedestrian_names = ["pedestrian1", "pedestrian2"]
-    pedestrians = [ Pedestrian(service_client_registry, pedestrian_name, model_path) for pedestrian_name in pedestrian_names ]
+    pedestrians = [Pedestrian(service_client_registry, f"pedestrian{pedestrian_number}", model_path)
+                   for pedestrian_number in range(pedestrian_count)]
 
     initial_pose = Pose2D(x=0.0, y=0.0, theta=0.0)
     for pedestrian in pedestrians:
         pedestrian.spawn(initial_pose)
 
-	# rate in Hertz
+        # rate in Hertz
     rate = rospy.Rate(2)
     toggle = False
 

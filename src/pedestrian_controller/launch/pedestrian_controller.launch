@@ -4,12 +4,15 @@
 
   <!-- Flatland -->
   <arg name="world_path" default="$(find flatland_server)/test/conestogo_office_test/world.yaml"/>
-  <arg name="pedestrian_model_path" default="$(find pedestrian_controller)/config/turtlebot_model.yaml"/>
   <arg name="update_rate" default="100.0"/>
   <arg name="viz_pub_rate" default="30.0"/>
   <arg name="step_size" default="0.01"/>
   <arg name="show_viz" default="true"/>
   <arg name="use_rviz" default="false"/>  
+
+  <!-- Pedestrian controller -->
+  <arg name="pedestrian_model_path" default="$(find pedestrian_controller)/config/turtlebot_model.yaml"/>
+  <arg name="pedestrian_count" default="2"/>
 
   <!-- Other -->
   <env name="ROSCONSOLE_FORMAT" value="[${severity} ${time} ${logger}]: ${message}" />
@@ -35,6 +38,7 @@
   <!-- Controll pedestrians in flatland environment -->
   <node name="pedestrian_controller" pkg="pedestrian_controller" type="pedestrian_controller.py" output="screen">
     <param name="pedestrian_model_path" value="$(arg pedestrian_model_path)" /> -->
+    <param name="pedestrian_count" value="$(arg pedestrian_count)" /> -->
   </node>
 
   <!-- Spawn pedestrian with ros service -->
