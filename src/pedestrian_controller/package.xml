@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>flatland_agent_spawner</name>
+  <name>pedestrian_controller</name>
   <version>0.0.0</version>
-  <description>The flatland_agent_spawner package</description>
+  <description>Controlls the pedestrians in the Flatland environment</description>
 
-  <maintainer email="user@todo.todo">user</maintainer>
+  <maintainer email="michael.lauter@student.uni-augsburg.de">Michael Lauter</maintainer>
   <license>BSD</license>
   <!-- <url type="website">http://wiki.ros.org/flatland_agent_spawner</url> -->
   <url type="repository">https://github.com/nautnatic/ans-safety-validation.git</url>

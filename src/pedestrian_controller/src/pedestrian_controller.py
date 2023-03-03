@@ -16,13 +16,14 @@ class ServiceClientRegistry:
 
 
 class Pedestrian:
-    def __init__(self, clientRegistry: ServiceClientRegistry, model_name: str):
+    def __init__(self, clientRegistry: ServiceClientRegistry, model_name: str, model_path: str):
         self.service_clients = clientRegistry
         self.model_name = model_name
+        self.model_path = model_path
 
     def spawn(self, initialPose: Pose2D):
         request = SpawnModelRequest(
-            yaml_path="/home/user/src/flatland_agent_spawner/config/turtlebot_model.yaml",
+            yaml_path=self.model_path,
             # only alphanumerics
             name=self.model_name,
             # throws warning if empty, namespaces of all pedestrians have to be different
@@ -32,22 +33,27 @@ class Pedestrian:
 
         response = self.service_clients.spawn_model(request)
         if not response.success:
-            rospy.logerr("Failed to spawn model: %s", response.error_message)
+            rospy.logerr("Failed to spawn model: %s", response.message)
+            exit()
 
     def move_to_pose(self, pose: Pose2D):
         request = MoveModelRequest(name=self.model_name, pose=pose)
 
         response = self.service_clients.move_model(request)
         if not response.success:
-            rospy.logerr("Failed to move model: %s", response.error_message)
-
+            rospy.logerr("Failed to move model: %s", response.message)
+            exit()
 
 if __name__ == '__main__':
-    rospy.init_node('flatland_agent_spawner')
+    rospy.init_node('pedestrian_controller')
+
+    # get params
+    model_path = rospy.get_param("/pedestrian_controller/pedestrian_model_path")
+
     service_client_registry = ServiceClientRegistry()
 
     pedestrian_names = ["pedestrian1", "pedestrian2"]
-    pedestrians = [ Pedestrian(service_client_registry, ped_name) for ped_name in pedestrian_names ]
+    pedestrians = [ Pedestrian(service_client_registry, pedestrian_name, model_path) for pedestrian_name in pedestrian_names ]
 
     initial_pose = Pose2D(x=0.0, y=0.0, theta=0.0)
     for pedestrian in pedestrians:
