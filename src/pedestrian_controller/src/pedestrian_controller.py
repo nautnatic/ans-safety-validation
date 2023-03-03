@@ -2,6 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Pose2D
+from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from flatland_msgs.srv import SpawnModel, SpawnModelRequest, SpawnModelResponse
 from flatland_msgs.srv import MoveModel, MoveModelRequest, MoveModelResponse
@@ -45,6 +46,17 @@ class Pedestrian:
             exit()
 
 
+class OdometrySubscriptionHandler:
+    def __init__(self):
+        self.pos_x_before = 0.0
+
+    def handle_odometry_subscription_message(self, odometry: Odometry):
+        pose = odometry.pose.pose
+        if pose.position.x != self.pos_x_before:
+            self.pos_x_before = pose.position.x
+            # rospy.loginfo(rospy.get_caller_id() + 'I heard %s', odometry)
+    
+
 if __name__ == '__main__':
     rospy.init_node('pedestrian_controller')
 
@@ -52,15 +64,21 @@ if __name__ == '__main__':
     model_path: str = rospy.get_param("/pedestrian_controller/pedestrian_model_path")
     pedestrian_count: int = rospy.get_param("/pedestrian_controller/pedestrian_count")
 
+	# setup
     service_client_registry = ServiceClientRegistry()
+    odometryHandler = OdometrySubscriptionHandler()
     pedestrians = [Pedestrian(service_client_registry, f"pedestrian{pedestrian_number}", model_path)
                    for pedestrian_number in range(pedestrian_count)]
 
+    # spawn pedestrians
     initial_pose = Pose2D(x=0.0, y=0.0, theta=0.0)
     for pedestrian in pedestrians:
         pedestrian.spawn(initial_pose)
 
-        # rate in Hertz
+    # subscriptions
+    rospy.Subscriber('/pedestrians_pedestrian0/odometry/ground_truth', Odometry, odometryHandler.handle_odometry_subscription_message)
+
+    # rate in Hertz
     rate = rospy.Rate(2)
     toggle = False
 
@@ -75,3 +93,17 @@ if __name__ == '__main__':
 
         toggle = not toggle
         rate.sleep()
+
+	# block execution of the current thread but keep listening for incoming messages from subscribed topics
+    # rospy.spin()
+
+        
+
+
+# Topics
+# /pedestrians_pedestrian0/cmd_vel
+# /pedestrians_pedestrian0/odom -> pose (position & orientation) and velocity (linear and angular)
+# /pedestrians_pedestrian0/odometry/ground_truth -> most accurate odometry measurement
+# /pedestrians_pedestrian0/scan
+# /pedestrians_pedestrian0/scan_3d
+# /pedestrians_pedestrian0/twist -> orientation
