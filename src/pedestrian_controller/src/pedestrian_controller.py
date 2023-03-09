@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
+import random
 import rospy
-from geometry_msgs.msg import Pose2D
+from geometry_msgs.msg import Pose2D, Twist, Vector3
 from nav_msgs.msg import Odometry
 from std_msgs.msg import String
 from flatland_msgs.srv import SpawnModel, SpawnModelRequest, SpawnModelResponse
@@ -16,19 +17,32 @@ class ServiceClientRegistry:
         self.move_model = rospy.ServiceProxy('move_model', MoveModel)
 
 
+PEDESTRIAN_NAMESPACE_PREFIX = "ped_"
+
+
 class Pedestrian:
-    def __init__(self, clientRegistry: ServiceClientRegistry, model_name: str, model_path: str):
-        self.service_clients = clientRegistry
-        self.model_name = model_name
+    def __init__(self, service_client_registry: ServiceClientRegistry, name: str, model_path: str, ground_truth_handler):
+        self.service_clients = service_client_registry
+        self.name = name
         self.model_path = model_path
+
+        self.topic_root = PEDESTRIAN_NAMESPACE_PREFIX + self.name
+
+        # subscribers
+        ground_truth_subscriber = rospy.Subscriber(
+            f'/{self.topic_root}/odometry/ground_truth', Odometry, ground_truth_handler)
+
+        # publishers
+        self.speed_publisher = rospy.Publisher(
+            f'/{self.topic_root}/cmd_vel', Twist, queue_size=10)
 
     def spawn(self, initialPose: Pose2D):
         request = SpawnModelRequest(
             yaml_path=self.model_path,
             # only alphanumerics
-            name=self.model_name,
+            name=self.name,
             # throws warning if empty, namespaces of all pedestrians have to be different
-            ns="pedestrians_" + self.model_name,
+            ns=self.topic_root,
             pose=initialPose
         )
 
@@ -38,12 +52,19 @@ class Pedestrian:
             exit()
 
     def move_to_pose(self, pose: Pose2D):
-        request = MoveModelRequest(name=self.model_name, pose=pose)
+        request = MoveModelRequest(name=self.name, pose=pose)
 
         response = self.service_clients.move_model(request)
         if not response.success:
             rospy.logerr("Failed to move model: %s", response.message)
             exit()
+
+    # def delete_model(self):
+    #     # TODO
+    #     ...
+
+    def set_speed(self, twist: Twist):
+        self.speed_publisher.publish(twist)
 
 
 class OdometrySubscriptionHandler:
@@ -54,50 +75,55 @@ class OdometrySubscriptionHandler:
         pose = odometry.pose.pose
         if pose.position.x != self.pos_x_before:
             self.pos_x_before = pose.position.x
-            # rospy.loginfo(rospy.get_caller_id() + 'I heard %s', odometry)
-    
+            rospy.loginfo(rospy.get_caller_id() + 'I heard %s', odometry)
+
+
+def get_random_twist():
+    def rand():
+        return random.uniform(0,10)
+
+    return Twist(
+        linear=Vector3(x=rand(), y=rand(), z=rand()),
+        angular=Vector3(x=rand(), y=rand(), z=rand())
+    )
+
 
 if __name__ == '__main__':
     rospy.init_node('pedestrian_controller')
 
     # get params
-    model_path: str = rospy.get_param("/pedestrian_controller/pedestrian_model_path")
-    pedestrian_count: int = rospy.get_param("/pedestrian_controller/pedestrian_count")
+    model_path: str = rospy.get_param(
+        "/pedestrian_controller/pedestrian_model_path")
+    pedestrian_count: int = rospy.get_param(
+        "/pedestrian_controller/pedestrian_count")
 
-	# setup
+    # setup
     service_client_registry = ServiceClientRegistry()
     odometryHandler = OdometrySubscriptionHandler()
-    pedestrians = [Pedestrian(service_client_registry, f"pedestrian{pedestrian_number}", model_path)
-                   for pedestrian_number in range(pedestrian_count)]
+    pedestrians = [
+        Pedestrian(
+            service_client_registry=service_client_registry,
+            name=f"pedestrian{pedestrian_number}",
+            model_path=model_path,
+            ground_truth_handler=odometryHandler.handle_odometry_subscription_message)
+        for pedestrian_number in range(pedestrian_count)
+    ]
 
     # spawn pedestrians
     initial_pose = Pose2D(x=0.0, y=0.0, theta=0.0)
     for pedestrian in pedestrians:
         pedestrian.spawn(initial_pose)
 
-    # subscriptions
-    rospy.Subscriber('/pedestrians_pedestrian0/odometry/ground_truth', Odometry, odometryHandler.handle_odometry_subscription_message)
-
     # rate in Hertz
-    rate = rospy.Rate(2)
-    toggle = False
-
+    rate = rospy.Rate(0.5)
     while not rospy.is_shutdown():
-        if toggle:
-            new_pose = Pose2D(x=10.0, y=0.0, theta=0.0)
-        else:
-            new_pose = Pose2D(x=-10.0, y=0.0, theta=0.0)
-
-        pedestrians[0].move_to_pose(new_pose)
-        # rospy.loginfo("moved to new pos")
-
-        toggle = not toggle
+        for pedestrian in pedestrians:
+            twist = get_random_twist()
+            rospy.loginfo(f"Set speed of {pedestrian.name} to {twist}")
+            pedestrian.set_speed(twist)
         rate.sleep()
 
-	# block execution of the current thread but keep listening for incoming messages from subscribed topics
-    # rospy.spin()
-
-        
+    rospy.spin()
 
 
 # Topics

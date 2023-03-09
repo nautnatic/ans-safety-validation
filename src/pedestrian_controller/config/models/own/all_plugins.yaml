@@ -1,0 +1,183 @@
+# list of rigid bodies, which are connected by joints
+bodies:
+  - name: base
+    pose: [0, 0, 0] 
+    type: dynamic  
+    color: [1, 1, 1, 0.75] 
+    # footprint visible in the simulation
+    footprints:
+      - type: polygon  # wheel
+        sensor: true
+        points: [[-.06025, -.2], [-.06025, -.15], [.06025, -.15], [.06025, -.2]]
+        density: 1
+        layers: []
+    pose: [0, 0, 0] 
+    type: dynamic  
+    color: [1, 0, 0, 0.75] 
+    footprints:
+      - type: polygon  # Laser model
+        sensor: true
+        points: [[.025, -.025], [.025, 0.025], [-.025, 0.025], [-.025, -0.025]]
+        layers: []
+        density: 1
+  - name: shell
+    pose: [0,0,0]
+    type: dynamic
+    color: [0,0,1,1.0]
+    footprints:
+      - type: circle
+        radius: 0.2552
+        center: [0, 0]
+        density: 1
+        layers: ["all"]
+
+joints:
+  - type: weld
+    name: laser_mount_weld
+    bodies: 
+      - name: laser_mount
+        anchor: [0, 0]
+      - name: base
+        anchor: [0, 0]
+  - type: weld
+    name: shell_mount_weld
+    bodies: 
+      - name: shell
+        anchor: [0, 0]
+      - name: base
+        anchor: [0, 0]
+
+plugins:
+    ##############################################################################
+    # BUMPER
+    # The bumper plugins publishes the state of Collisions of bodies in the model. The Collision and Collisions message are defined in flatland_msgs. It publishes empty collisions if there are nothing colliding. 
+    # plugin type
+  - type: Bumper  
+    # plugin name (unique within the model)
+    name: MyBumper  
+    # frame_id of world coordinate system (as reference frame for collision points, default: map)
+    world_frame_id: world
+    # topic to publish collisions to (begin with "/" to ignore model namespace, default: "collisions")
+    topic: collisions
+    # publishing rate for collision messages (in Hz, default: .inf -> every time step)
+    update_rate: .inf
+    # always immediatly publish recognized collisions regardless of update_rate. Otherwise publish empty list at update_rate (default: true)
+    publish_all_collisions: true
+    # bodies whose collision state should not be published (default: [])
+    exclude: []
+
+    ##############################################################################
+    # DIFFERENTIAL DRIVE
+    # All velocities and odometries are with relation to the robot origin.
+    # Subscribes to topic publishing gemoetry_msgs/Twist messages and move the robot accordingly.
+    # Publishes to two topics with nav_msgs/Odometry messsages, one for robot odometry (includes noice) and one for the ground truth odometry (no noice)
+  - type: DiffDrive 
+    name: turtlebot_drive 
+    # body of the model to set velocities and obtain odometry from
+    body: base
+    # name of odometry frame (default: odom)
+    odom_frame_id: odom
+    # name of the ground truth origin TF frame (optional?)
+    ground_truth_frame_id: map
+    # publishing rate for odometries (in Hz, default: .inf)
+    pub_rate: 10
+
+    # topic to subscribe for velocity commands (default: cmd_vel)
+    twist_sub: cmd_vel
+
+    # topic to publish robot odometry to (noicy)
+    odom_pub: odom
+    # topic to publish the ground truth odometry to (default: odometry/ground_truth)
+    ground_truth_pub: odometry/ground_truth
+
+    # topic to publish noicy local frame velocity to (simulates encoder readings, default: twist)
+    twist_pub: twist
+
+    # enable publishing of odometry (both ground truth and noisy odometry, default: true)
+    enable_odom_pub: true
+    # enable publishing of noicy local frame velocity (default: true)
+    enable_twist_pub: true
+
+    # variances of the gaussian noise applied to the pose components of the noisy odometry message (corresponding to [x,y,yaw], default: [0,0,0])
+    odom_pose_noise: [0, 0, 0]
+    # variances of the gaussian noise applied to the twist components of the noisy odometry message (corresponding to [x_velocity,y_velocity,yaw_rate], default: [0,0,0])
+    odom_twist_noise: [0, 0, 0]
+
+    # ???
+    # array with length 36 representing a 6x6 convariance matrix for x, y, z, roll, pitch, yaw
+    # (default: diagonal of [x,y,yaw] components replaced by odom_pose_noice with all other vlaues equals zero)
+    # This does not involve in any of the noise calculation, it is simply the output values of odometry pose covariance
+    odom_pose_covariance: [0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0]
+    # ???
+    # array with length 36 representing a 6x6 convariance matrix for rates of x, y, z, roll, pitch, yaw
+    # (default: diagonal of [x velocity, y velocity, yaw rate] components replaced by odom_twist_noise with all other values equals zero
+    # This does not involve in any of the noise calculation, it is simply the output values of odometry twist covariance
+    odom_twist_covariance: [0, 0, 0, 0, 0, 0
+                           0, 0, 0, 0, 0, 0
+                           0, 0, 0, 0, 0, 0
+                           0, 0, 0, 0, 0, 0
+                           0, 0, 0, 0, 0, 0
+                           0, 0, 0, 0, 0, 0]
+
+    # dynamics constraints on angular velocity, acceleration (in rads/sec; rads/sec/sec, default: all parameters = 0.0 -> no limit)
+    angular_dynamics:
+      acceleration_limit: 0.1
+      deceleration_limit: 0.1
+      velocity_limit: 0.1
+    # sets dynamics constraints on linear velocity, acceleration (in m/s; m/s/s, default: all parameters = 0.0 -> no limit)
+    linear_dynamics:
+      acceleration_limit: 0.1
+      deceleration_limit: 0.1
+      velocity_limit: 0.1
+
+
+    ##############################################################################
+    # LASER
+    # publishes 2D laser data (distance measurement)
+  - type: Laser
+    name: laser_back
+    # topic to publish the laser data to (default: scan)
+    topic: scan
+    # body to attach the laser to
+    body: base_link
+    # position and orientation of the place laser's coordinate system (default: [0,0,0] representing [x,y,yaw])
+    origin: [0, 0, 0]
+    # publish TF (default: true)
+    broadcast_tf: true
+    # TF frame id to publish TF (default: name of this plugin, only used if broadcast_tf=true)
+    frame: laser_back
+    # maximum range of the laser in meters (minimum range is always 0)
+    range: 20
+    # standard deviation of a gaussian noise (default: 0.0)
+    noise_std_dev: 0
+    # scan is executed from min anglet to max angle at steps of increment (positive increment -> counter-clockwise scan direction)
+    angle: {min: -2.356194490192345, max: 2.356194490192345, increment: 0.004363323129985824}
+    # publishing rate for laser scan messages (default .inf -> as fast as possible)
+    update_rate: .inf
+    # layers to operate the laser at (objects on other layers are not detected, default: all)
+    layers: ["all"]
+    # mounting orientation of the laser -> roll=Pi (default: false -> not inverted)
+    # (as if you physically mounted the lidar upside down)
+    upside_down: false
+
+    ##############################################################################
+    # MODEL TF PUBLISHER
+    # broadcasts TF of bodies in the model. It obtains world position and orientation of bodies from the simulation, calculates relative transformation w.r.t. the specifies reference body, and broadcast the TF.
+    # Transforms tree publisher for ROS (TF = standard format to transform coordinate systems into each other, create TF tree)
+  - type: ModelTfPublisher
+    name: state_publisher
+    # publishing rate for tf messages (default: .inf -> as fast as possible)
+    update_rate: .inf
+    # broadcast TF w.r.t. a frame (default: false)
+    publish_tf_world: false
+    # world frame id (only used when publish_tf_world=true, default: map)
+    world_frame_id: map
+    # reference body to broadcast all other bodies' TF with respect to (does not affect transformation, only how TF tree looks like, default: first body in the model)
+    reference: base
+    # bodies for which no TF messages should be published (default: [])
+    exclude: []

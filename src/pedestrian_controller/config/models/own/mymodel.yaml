@@ -1,0 +1,64 @@
+bodies:
+  - name: base
+    pose: [0,0,0]
+    type: dynamic
+    color: [0,0,1,1.0]
+    footprints:
+      - type: circle
+        radius: 0.2552
+        center: [0, 0]
+        density: 1
+        layers: ["all"]
+
+plugins:
+  - type: Bumper  
+    name: myBumper  
+    # frame_id of world coordinate system (as reference frame for collision points, default: map)
+    world_frame_id: world
+    # topic to publish collisions to (begin with "/" to ignore model namespace, default: "collisions")
+    # topic: collisions
+    # publishing rate for collision messages (in Hz, default: .inf -> every time step)
+    update_rate: .inf
+    # always immediatly publish recognized collisions regardless of update_rate. Otherwise publish empty list at update_rate (default: true)
+    # publish_all_collisions: true
+    # bodies whose collision state should not be published (default: [])
+    # exclude: []
+
+  - type: DiffDrive 
+    name: myDrive
+    # body of the model to set velocities and obtain odometry from
+    body: base
+    # name of odometry frame (default: odom)
+    # odom_frame_id: odom
+    # name of the ground truth origin TF frame (default: map???????)
+    # ground_truth_frame_id: map
+    # publishing rate for odometries (in Hz, default: .inf)
+    pub_rate: 10
+
+    # dynamics constraints on angular velocity, acceleration (in rads/sec; rads/sec/sec, default: all parameters = 0.0 -> no limit)
+    angular_dynamics:
+      acceleration_limit: 52.0 # athletes: < 3000 °/s/s = 52 rad/s/s
+      deceleration_limit: 87.0 # athletes: < 5000 °/s/s = 87 rad/s/s 
+      velocity_limit: 12.5 # athletes: < 720 °/s = 12.5 rad/s
+    # # sets dynamics constraints on linear velocity, acceleration (in m/s; m/s/s, default: all parameters = 0.0 -> no limit)
+    linear_dynamics:
+      acceleration_limit: 10.0 # athletes: acceleration of <10m/s/s
+      deceleration_limit: 4.0 # athletes: deceleration of <4m/s/s
+      velocity_limit: 45.0 # athletes: <45m/s/s
+
+    # TOPICS
+    # subscribed topic: cmd_vel (velocity commands)
+    # published topic: odometry/ground_truth (ground truth odometry)
+    # published topic: twist (velocity)
+
+  - type: ModelTfPublisher
+    name: state_publisher
+    update_rate: .inf
+    # broadcast TF w.r.t. a frame (default: false)
+    publish_tf_world: false
+    # world frame id (only used when publish_tf_world=true, default: map)
+    world_frame_id: map
+    # reference body to broadcast all other bodies' TF with respect to (does not affect transformation, only how TF tree looks like, default: first body in the model)
+    reference: base
+    # bodies for which no TF messages should be published (default: [])
+    # exclude: []
