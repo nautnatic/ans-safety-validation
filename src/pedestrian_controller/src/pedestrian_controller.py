@@ -59,11 +59,12 @@ class Pedestrian:
             rospy.logerr("Failed to move model: %s", response.message)
             exit()
 
-    # def delete_model(self):
-    #     # TODO
-    #     ...
-
-    def set_speed(self, twist: Twist):
+    # angular and linear speed
+    def set_twist(self, movement_speed: float, rotation_speed: float):
+        twist = Twist(
+            linear=Vector3(x=movement_speed, y=0.0, z=0.0),
+            angular=Vector3(x=0.0, y=0.0, z=rotation_speed)
+        )
         self.speed_publisher.publish(twist)
 
 
@@ -76,16 +77,6 @@ class OdometrySubscriptionHandler:
         if pose.position.x != self.pos_x_before:
             self.pos_x_before = pose.position.x
             rospy.loginfo(rospy.get_caller_id() + 'I heard %s', odometry)
-
-
-def get_random_twist():
-    def rand():
-        return random.uniform(0,10)
-
-    return Twist(
-        linear=Vector3(x=rand(), y=rand(), z=rand()),
-        angular=Vector3(x=rand(), y=rand(), z=rand())
-    )
 
 
 if __name__ == '__main__':
@@ -103,7 +94,7 @@ if __name__ == '__main__':
     pedestrians = [
         Pedestrian(
             service_client_registry=service_client_registry,
-            name=f"pedestrian{pedestrian_number}",
+            name=f"{pedestrian_number}",
             model_path=model_path,
             ground_truth_handler=odometryHandler.handle_odometry_subscription_message)
         for pedestrian_number in range(pedestrian_count)
@@ -114,22 +105,19 @@ if __name__ == '__main__':
     for pedestrian in pedestrians:
         pedestrian.spawn(initial_pose)
 
-    # rate in Hertz
-    rate = rospy.Rate(0.5)
     while not rospy.is_shutdown():
+        # rotation phase
         for pedestrian in pedestrians:
-            twist = get_random_twist()
-            rospy.loginfo(f"Set speed of {pedestrian.name} to {twist}")
-            pedestrian.set_speed(twist)
-        rate.sleep()
+            rotation_speed = random.uniform(-3, 3)
+            movement_speed = random.uniform(-2, 2)
+            pedestrian.set_twist(movement_speed=movement_speed, rotation_speed=rotation_speed)
+        rospy.sleep(2)
+
+        # movement phase
+        for pedestrian in pedestrians:
+            movement_speed = random.uniform(-5, 5)
+            rotation_speed = random.uniform(-0.5, 0.5)
+            pedestrian.set_twist(movement_speed=movement_speed, rotation_speed=rotation_speed)
+        rospy.sleep(2)
 
     rospy.spin()
-
-
-# Topics
-# /pedestrians_pedestrian0/cmd_vel
-# /pedestrians_pedestrian0/odom -> pose (position & orientation) and velocity (linear and angular)
-# /pedestrians_pedestrian0/odometry/ground_truth -> most accurate odometry measurement
-# /pedestrians_pedestrian0/scan
-# /pedestrians_pedestrian0/scan_3d
-# /pedestrians_pedestrian0/twist -> orientation
