@@ -1,18 +1,22 @@
 services:
-  arena:
+  ans-env:
     image: $DOCKER_IMAGE_TAG
     container_name: $DOCKER_CONTAINER_NAME
     environment:
       - DISPLAY
       - QT_X11_NO_MITSHM=1
-#      - LAUNCH_PACKAGE=$LAUNCH_PACKAGE
-#      - LAUNCH_FILE=$LAUNCH_FILE
-#      - ADDITIONAL_LAUNCH_PARAMS=$ADDITIONAL_LAUNCH_PARAMS
     volumes:
       # to show GUI
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      # map arena-bench repo as ros package
-      - ../src/pedestrian_controller:/home/user/src/pedestrian_controller
+      - ../src/training_coordinator:/home/user/src/training_coordinator
       - ../scripts/launch-simulation.sh:/home/user/launch.sh
-    # uncomment this to just start container and wait instead of launching simulation
+      - logs:/home/user/.ros/log
+      - devel_cache:/home/user/devel
+      - build_cache:/home/user/build
+    # Start container and wait
     command: tail -f /dev/null
+
+volumes:
+  logs:
+  devel_cache:
+  build_cache:

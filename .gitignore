@@ -2,6 +2,7 @@ tmp
 
 # direnv
 .envrc
+__pycache__
 
 # IntelliJ
 *.iml

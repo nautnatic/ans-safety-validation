@@ -21,7 +21,11 @@ PEDESTRIAN_NAMESPACE_PREFIX = "ped_"
 
 
 class Pedestrian:
-    def __init__(self, service_client_registry: ServiceClientRegistry, name: str, model_path: str, ground_truth_handler):
+    def __init__(self,
+                 service_client_registry: ServiceClientRegistry,
+                 name: str,
+                 model_path: str,
+                 ground_truth_handler):
         self.service_clients = service_client_registry
         self.name = name
         self.model_path = model_path
@@ -81,12 +85,13 @@ class OdometrySubscriptionHandler:
 
 if __name__ == '__main__':
     rospy.init_node('pedestrian_controller')
+    controller_name = "training_coordinator"
 
     # get params
     model_path: str = rospy.get_param(
-        "/pedestrian_controller/pedestrian_model_path")
+        f"{controller_name}/pedestrian_model_path")
     pedestrian_count: int = rospy.get_param(
-        "/pedestrian_controller/pedestrian_count")
+        f"{controller_name}/pedestrian_count")
 
     # setup
     service_client_registry = ServiceClientRegistry()
@@ -106,18 +111,21 @@ if __name__ == '__main__':
         pedestrian.spawn(initial_pose)
 
     while not rospy.is_shutdown():
+        # rospy.loginfo("loop")
         # rotation phase
         for pedestrian in pedestrians:
             rotation_speed = random.uniform(-3, 3)
             movement_speed = random.uniform(-2, 2)
-            pedestrian.set_twist(movement_speed=movement_speed, rotation_speed=rotation_speed)
+            pedestrian.set_twist(movement_speed=movement_speed,
+                                 rotation_speed=rotation_speed)
         rospy.sleep(2)
 
         # movement phase
         for pedestrian in pedestrians:
             movement_speed = random.uniform(-5, 5)
             rotation_speed = random.uniform(-0.5, 0.5)
-            pedestrian.set_twist(movement_speed=movement_speed, rotation_speed=rotation_speed)
+            pedestrian.set_twist(movement_speed=movement_speed,
+                                 rotation_speed=rotation_speed)
         rospy.sleep(2)
 
     rospy.spin()

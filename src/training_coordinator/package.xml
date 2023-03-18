@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>pedestrian_controller</name>
+  <name>training_coordinator</name>
   <version>0.0.0</version>
   <description>Controlls the pedestrians in the Flatland environment</description>
 

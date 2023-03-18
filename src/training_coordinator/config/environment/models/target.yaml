@@ -1,0 +1,36 @@
+bodies:
+  - name: base
+    pose: [0,0,0]
+    type: dynamic
+    color: [1,0,0,1.0]
+    footprints:
+      - type: circle
+        radius: 0.2552
+        center: [0, 0]
+        density: 1
+        layers: ["all"]
+
+plugins:
+  - type: Bumper  
+    name: bumper
+    world_frame_id: world
+    update_rate: .inf
+
+  - type: DiffDrive 
+    name: diff_drive
+    body: base
+    odom_frame_id: odom
+    odom_pub: odom  # topic odom is published on
+    pub_rate: 10
+
+  - type: ModelTfPublisher
+    name: state_publisher
+    update_rate: .inf
+    # broadcast TF w.r.t. a frame (default: false)
+    publish_tf_world: false
+    # world frame id (only used when publish_tf_world=true, default: map)
+    world_frame_id: map
+    # reference body to broadcast all other bodies' TF with respect to (does not affect transformation, only how TF tree looks like, default: first body in the model)
+    reference: base
+    # bodies for which no TF messages should be published (default: [])
+    # exclude: []

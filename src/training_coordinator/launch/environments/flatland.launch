@@ -1,0 +1,23 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="show_visualization" default="true"/>
+  <arg name="world" default="map_empty"/>
+  <arg name="update_rate" default="100.0"/>
+  <arg name="viz_pub_rate" default="30.0"/>
+  <arg name="step_size" default="0.01"/>
+
+  <!-- Flatland server -->
+  <node name="flatland_server" pkg="flatland_server" type="flatland_server" output="screen">
+    <param name="world_path" value="$(find training_coordinator)/config/environment/maps/$(arg world)/map.world.yaml" />
+    <param name="update_rate" value="$(arg update_rate)" />
+    <param name="viz_pub_rate" value="$(arg viz_pub_rate)" />
+    <param name="step_size" value="$(arg step_size)" />
+    <param name="show_viz" value="$(arg show_visualization)" />
+  </node>
+
+  <!-- Flatland visualization (if enabled) -->
+  <group if="$(arg show_visualization)">
+    <node name="flatland_viz" pkg="flatland_viz" type="flatland_viz" output="screen" required="true"/>
+  </group>
+
+</launch>
