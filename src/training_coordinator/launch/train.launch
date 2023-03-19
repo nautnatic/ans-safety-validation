@@ -1,8 +1,8 @@
 <launch>
   <!-- Configure general settings -->
   <env name="ROSCONSOLE_CONFIG_FILE" value="$(find training_coordinator)/config/ros/logging.conf"/>
-  <env name="ROSCONSOLE_FORMAT" value="[ ${severity} ${time} ${logger}]: ${message}" />
-  <param name="use_sim_time" value="true"/>
+  <env name="ROSCONSOLE_FORMAT" value="[ ${severity} ${time:%Y-%m-%d %H:%M:%S} ]: ${message}" />
+  <param name="use_sim_time" value="True"/>
 
   <!-- Provide Flatland simulation environment (2D, without agents) -->
   <include file="$(find training_coordinator)/launch/environments/flatland.launch">
