@@ -48,8 +48,8 @@ USER $USER_NAME
 WORKDIR $HOME
 
 # install python dependencies globally with pip
-RUN pip install --upgrade \
-  numpy stable-baselines3 flake8 autopep8
+RUN pip install --upgrade --no-cache-dir \
+    numpy stable-baselines3 flake8 autopep8
 
 # prepare catkin workspace (src directory contains packages)
 RUN mkdir -p $HOME/src/
@@ -72,5 +72,3 @@ RUN source "/opt/ros/noetic/setup.sh" \
 # add ros setup to .bashrc to do autonatically when opening new bash shell
 RUN echo -e "source /opt/ros/noetic/setup.bash" >> $HOME/.bashrc
 RUN echo -e "source $HOME/devel/setup.bash" >> $HOME/.bashrc
-
-ENTRYPOINT []
