@@ -13,6 +13,6 @@ else
     -t $DOCKER_IMAGE_TAG \
     --build-arg USER_ID="$(id -u "${USER}")" \
     --build-arg GROUP_ID="$(id -g "${USER}")" \
-    --no-cache
+    --no-cache \
     ../environment-setup
 fi
