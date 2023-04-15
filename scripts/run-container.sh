@@ -6,4 +6,4 @@ sudo xhost +local:root
 #END
 #)
 
-docker compose -f ../environment-setup/docker-compose.yaml up -d --force-recreate
+docker compose -f ../environment-setup/docker-compose.yaml up -d --force-recreate --remove-orphans
