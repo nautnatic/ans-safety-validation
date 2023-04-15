@@ -9,6 +9,8 @@ services:
       # to show GUI
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../src/training_coordinator:/home/user/src/training_coordinator
+      - ../../flatland_fork:/home/user/src/flatland
+      # - ../../flatland_arena:/home/user/src/flatland
       - ../scripts/launch-simulation.sh:/home/user/launch.sh
       - logs:/home/user/.ros/log
       - devel_cache:/home/user/devel

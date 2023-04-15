@@ -2,7 +2,7 @@
   <!-- Configure general settings -->
   <env name="ROSCONSOLE_CONFIG_FILE" value="$(find training_coordinator)/config/ros/logging.conf"/>
   <env name="ROSCONSOLE_FORMAT" value="[ ${severity} ${time:%Y-%m-%d %H:%M:%S} ]: ${message}" />
-  <param name="use_sim_time" value="True"/>
+  <param name="use_sim_time" value="False"/>
 
   <!-- Provide Flatland simulation environment (2D, without agents) -->
   <include file="$(find training_coordinator)/launch/environments/flatland.launch">
@@ -11,7 +11,7 @@
   </include>
 
   <!-- Training coordinator -->
-  <node name="training_coordinator" pkg="training_coordinator" type="train.py" output="screen">
+  <node name="training_coordinator" pkg="training_coordinator" type="test.py" output="screen">
     <param name="pedestrian_model_path" value="$(find training_coordinator)/config/environment/models/pedestrian.yaml" />
     <param name="pedestrian_count" value="10" />
   </node>

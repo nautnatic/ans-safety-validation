@@ -14,7 +14,7 @@ from flatland.observation_action_spaces import (
     ActionDecoder,
     create_action_space,
 )
-from flatland.model_mediator import FlatlandModelMediator
+from flatland.model_mediator import FlatlandWorldMediator, FlatlandModelMediator
 from flatland.random_pose_generator import RandomBoxPoseGenerator
 
 
@@ -25,9 +25,10 @@ class FlatlandEnv(Env):
         self.current_episode = 0
         # steps only counted within one episode
         self.current_step = 0
-        self.max_steps_per_episode = 20
+        self.max_steps_per_episode = 40
 
-        # create models mediators
+        # create mediators for flatland
+        self.world = FlatlandWorldMediator(self)
         self.robot = FlatlandModelMediator(
             model_name="robot",
             model_path="/home/user/src/training_coordinator/config/environment/models/robot.yaml",
@@ -46,7 +47,7 @@ class FlatlandEnv(Env):
         self.decode_action = ActionDecoder()
         self.calculate_reward = RewardCalculator(
             env=self,
-            target_reward=1.0,
+            target_reward=10.0,
             step_base_reward=-1.0,
             distance_factor=-0.5,
             distance_threshold=1.0,
@@ -67,8 +68,8 @@ class FlatlandEnv(Env):
             target_position_y=[1.0, 30.0],
         )
         self.action_space = create_action_space(
-            robot_linear_velocity_internal=[-5.0, 5.0],
-            robot_angular_velocity_internal=[-5.0, 5.0],
+            robot_linear_velocity_internal=[0.0, 5.0],
+            robot_angular_velocity_internal=[-math.pi/4, math.pi/4],
         )
 
         # spawn models
@@ -90,6 +91,8 @@ class FlatlandEnv(Env):
         self.robot.move_to_pose(self.spawn_strategy.get_pose())
         self.target.move_to_pose(self.spawn_strategy.get_pose())
 
+        self.world.step()
+
         rospy.sleep(0.5)
         observation = self.get_observation()
         encoded_observation = self.encode_observation(observation)
@@ -98,20 +101,26 @@ class FlatlandEnv(Env):
 
     def step(self, encoded_action):
         # setup for step
+        rospy.loginfo("1")
         next_action = self.decode_action(encoded_action)
 
+        rospy.loginfo("2")
         # execute action and get observation
         self.robot.set_target_speed(
             linear=next_action["linear"], angular=next_action["angular"]
         )
-        rospy.sleep(0.5)
+        rospy.sleep(2)
+        rospy.loginfo("3")
+        self.world.step()
+        rospy.sleep(2)
+        rospy.loginfo("4")
         observation = self.get_observation()
 
         # calculate step results
         reward = self.calculate_reward(observation)
         encoded_observation = self.encode_observation(observation)
         info = {}
-        
+
         # check if episode is done
         if reward == 1.0 or self.current_step == self.max_steps_per_episode:
             done = True
@@ -120,7 +129,7 @@ class FlatlandEnv(Env):
 
         self.current_step = self.current_step + 1
 
-        rospy.loginfo(f"| Episode {self.current_episode:3d} | Step {self.current_step:3d} | -> Reward: {reward:6.2f}")
+        rospy.loginfo(f"| Episode {self.current_episode:3d} | Step {self.current_step:3d} | Reward {reward:6.2f}")
 
         # return step results
         return (encoded_observation, reward, done, info)
