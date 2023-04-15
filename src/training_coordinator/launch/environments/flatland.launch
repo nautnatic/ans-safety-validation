@@ -2,9 +2,10 @@
   <!-- Arguments -->
   <arg name="show_visualization" default="true"/>
   <arg name="world" default="map_empty"/>
+  <!-- <arg name="update_rate" default="100.0"/> -->
   <arg name="update_rate" default="100.0"/>
-  <arg name="viz_pub_rate" default="30.0"/>
-  <arg name="step_size" default="0.01"/>
+  <arg name="viz_pub_rate" default="10.0"/>
+  <arg name="step_size" default="0.1"/>
 
   <!-- Flatland server -->
   <node name="flatland_server" pkg="flatland_server" type="flatland_server" output="screen">
