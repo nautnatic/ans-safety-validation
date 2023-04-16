@@ -54,6 +54,9 @@ RUN pip install --upgrade --no-cache-dir \
 # prepare catkin workspace (src directory contains packages)
 RUN mkdir -p $HOME/src/
 
+# prepare logging directory
+RUN mkdir -p $HOME/.ros && chown -R $USER_NAME:$USER_NAME $HOME/.ros
+
 # install ros dependencies
 WORKDIR $HOME/src
 COPY .rosinstall .
