@@ -18,8 +18,18 @@ To launch the environment, run a container of the created image by executing [th
 
 In this script, a container of the previously built image is created through a docker-compose file. Also, in this file the X11 server is mapped to the outside to show the GUIs of the windows opening in the container on the host system.
 
-## Execute shell inside the container
-To execute a bash shell inside the running container execute [this](../scripts/exec-container-shell.sh) shell script.
+## Open a shell inside the container
+### Remote Development with VS Code
+For development we recommend to do remote development inside the container with VS Code. This allows to view the filesystem as well. To allow development with Python, the pip packages _flake8_ and _autopep8_ are already installed in the Dockerfile.
 
-## Launch ROS package
-The different launch configurations are documented [here](LaunchConfigurations.md).
+First, you need to install the [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extension pack.
+
+Next, build and run the image as described in the steps above.
+
+Last, execute the action `Remote-Containers: Attach to Running Container...` in the command palette (Ctrl+Shift+P) and select the container name (default: _ans-env_).
+
+### Execute shell inside the container
+Alternatively, you can start a bash shell inside the container by executing the [`exec-container-shell.sh`](../scripts/exec-container-shell.sh) shell script.
+
+## Launch simulation
+When you have a shell inside the container, you can launch the simulation with the `launch.sh` script, which is mounted in the users home directory inside the container. This script rebuilds the project (`catkin_make`), sources the ROS setup scripts and launches the simulation (`roslaunch`).
