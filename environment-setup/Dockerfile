@@ -3,7 +3,6 @@ FROM osrf/ros:noetic-desktop-full
 SHELL ["/bin/bash", "-c"]
 
 # configure user to avoid permission problems with host in volumes
-# source: https://jtreminio.com/blog/running-docker-containers-as-current-host-user/
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USER_NAME=user
@@ -66,11 +65,6 @@ RUN rosws update
 WORKDIR $HOME
 RUN source "/opt/ros/noetic/setup.sh" \
     && catkin_make -j1
-
-# build new packages and launch ros launch file
-#CMD catkin_make \
-#    && source $HOME/devel/setup.sh \
-#    && roslaunch ${LAUNCH_PACKAGE} ${LAUNCH_FILE} ${ADDITIONAL_LAUNCH_PARAMS}
 
 # add ros setup to .bashrc to do autonatically when opening new bash shell
 RUN echo -e "source /opt/ros/noetic/setup.bash" >> $HOME/.bashrc
