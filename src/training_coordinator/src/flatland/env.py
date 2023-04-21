@@ -19,13 +19,13 @@ from flatland.random_pose_generator import RandomBoxPoseGenerator
 
 
 class FlatlandEnv(Env):
-    def __init__(self, name: str = ""):
+    def __init__(self, name: str, max_steps_per_episode: int):
         super(FlatlandEnv, self).__init__()
         self.name = name
+        self.max_steps_per_episode = max_steps_per_episode
         self.current_episode = 0
         # steps only counted within one episode
         self.current_step = 0
-        self.max_steps_per_episode = 20
 
         # create models mediators
         self.robot = FlatlandModelMediator(
@@ -46,7 +46,7 @@ class FlatlandEnv(Env):
         self.decode_action = ActionDecoder()
         self.calculate_reward = RewardCalculator(
             env=self,
-            target_reward=1.0,
+            target_reward=10.0,
             step_base_reward=-1.0,
             distance_factor=-0.5,
             distance_threshold=1.0,
@@ -68,7 +68,7 @@ class FlatlandEnv(Env):
         )
         self.action_space = create_action_space(
             robot_linear_velocity_internal=[-5.0, 5.0],
-            robot_angular_velocity_internal=[-5.0, 5.0],
+            robot_angular_velocity_internal=[-math.pi, math.pi],
         )
 
         # spawn models
@@ -120,7 +120,7 @@ class FlatlandEnv(Env):
 
         self.current_step = self.current_step + 1
 
-        rospy.loginfo(f"| Episode {self.current_episode:3d} | Step {self.current_step:3d} | -> Reward: {reward:6.2f}")
+        # rospy.loginfo(f"| Episode {self.current_episode:3d} | Step {self.current_step:3d} | -> Reward: {reward:6.2f}")
 
         # return step results
         return (encoded_observation, reward, done, info)
