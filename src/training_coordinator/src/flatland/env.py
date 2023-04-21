@@ -112,7 +112,7 @@ class FlatlandEnv(Env):
         info = {}
         
         # check if episode is done
-        if reward == 1.0 or self.current_step == self.max_steps_per_episode:
+        if reward > 0.0 or self.current_step == self.max_steps_per_episode:
             done = True
         else:
             done = False
