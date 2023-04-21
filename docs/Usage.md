@@ -33,3 +33,10 @@ Alternatively, you can start a bash shell inside the container by executing the 
 
 ## Launch simulation
 When you have a shell inside the container, you can launch the simulation with the `launch.sh` script, which is mounted in the users home directory inside the container. This script rebuilds the project (`catkin_make`), sources the ROS setup scripts and launches the simulation (`roslaunch`).
+
+## Logs, model parameters, checkpoints
+The output for each training run including the model parameters are saved in the `logs` directory defined through the ROS parameter log_container_path of the training_coordinator node. You have to configure the number of runs that you want to keep the logs for by specifying the ROS parameter `number_logs_to_keep`.
+
+Also, you need to specify the ROS parameters `checkpoint_frequency_in_steps` to define how often the current model parameters should be saved in the checkpoint directory inside the log directory of the current run. This is useful, if the training fails, because you don't have to start training from scratch, but can continue from the last checkpoint.
+
+If you want to keep specific parameters permanently, copy them to a different directory than the logs directory, so they don't get cleaned up.

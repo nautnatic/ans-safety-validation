@@ -14,9 +14,11 @@
   <node name="training_coordinator" pkg="training_coordinator" type="train.py" output="screen">
     <param name="pedestrian_model_path" value="$(find training_coordinator)/config/environment/models/pedestrian.yaml" />
     <param name="max_steps_per_episode" value="200" />
-    <param name="behavior_model_output_path" value="$(find training_coordinator)/behavior_models/model" />
+    <param name="log_container_path" value="$(find training_coordinator)/logs" />
     <param name="learning_rate" value="3e-3" />
-    <param name="total_timesteps" value="10000" />
+    <param name="total_timesteps" value="1000" />
+    <param name="checkpoint_frequency_in_steps" value="100" />
+    <param name="number_logs_to_keep" value="5" />
   </node>
 
 </launch>
