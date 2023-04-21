@@ -14,9 +14,7 @@ class LogManager:
         dirs = [content for content in contents if os.path.isdir(os.path.join(self.log_container_path, content))]
         dirs.sort()
         dirs_to_delete = dirs[:-num_logs_to_keep]
-        print(dirs_to_delete)
         for dir in dirs_to_delete:
-            print(dir)
             shutil.rmtree(os.path.join(self.log_container_path, dir))
 
     def create_next_log_path(self):

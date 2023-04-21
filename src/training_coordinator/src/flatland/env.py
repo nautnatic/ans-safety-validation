@@ -83,7 +83,6 @@ class FlatlandEnv(Env):
         self.target.delete()
 
     def reset(self):
-        rospy.loginfo("Reset environment")
         self.current_step = 0
         self.current_episode = self.current_episode + 1
 
@@ -119,8 +118,6 @@ class FlatlandEnv(Env):
             done = False
 
         self.current_step = self.current_step + 1
-
-        # rospy.loginfo(f"| Episode {self.current_episode:3d} | Step {self.current_step:3d} | -> Reward: {reward:6.2f}")
 
         # return step results
         return (encoded_observation, reward, done, info)

@@ -16,8 +16,8 @@
     <param name="max_steps_per_episode" value="200" />
     <param name="log_container_path" value="$(find training_coordinator)/logs" />
     <param name="learning_rate" value="3e-3" />
-    <param name="total_timesteps" value="1000" />
-    <param name="checkpoint_frequency_in_steps" value="100" />
+    <param name="total_timesteps" value="100000" />
+    <param name="checkpoint_frequency_in_steps" value="10000" />
     <param name="number_logs_to_keep" value="5" />
   </node>
 
