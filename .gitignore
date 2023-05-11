@@ -7,3 +7,7 @@ __pycache__
 # IntelliJ
 *.iml
 .idea/
+
+# other
+logs
+model_store
