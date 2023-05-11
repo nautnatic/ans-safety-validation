@@ -3,7 +3,6 @@ FROM osrf/ros:noetic-desktop-full
 SHELL ["/bin/bash", "-c"]
 
 # configure user to avoid permission problems with host in volumes
-# source: https://jtreminio.com/blog/running-docker-containers-as-current-host-user/
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USER_NAME=user
@@ -49,10 +48,13 @@ WORKDIR $HOME
 
 # install python dependencies globally with pip
 RUN pip install --upgrade --no-cache-dir \
-    numpy stable-baselines3 flake8 autopep8
+    numpy stable-baselines3[extra] flake8 autopep8
 
 # prepare catkin workspace (src directory contains packages)
 RUN mkdir -p $HOME/src/
+
+# prepare logging directory
+RUN mkdir -p $HOME/.ros && chown -R $USER_NAME:$USER_NAME $HOME/.ros
 
 # install ros dependencies
 WORKDIR $HOME/src
@@ -63,11 +65,6 @@ RUN rosws update
 WORKDIR $HOME
 RUN source "/opt/ros/noetic/setup.sh" \
     && catkin_make -j1
-
-# build new packages and launch ros launch file
-#CMD catkin_make \
-#    && source $HOME/devel/setup.sh \
-#    && roslaunch ${LAUNCH_PACKAGE} ${LAUNCH_FILE} ${ADDITIONAL_LAUNCH_PARAMS}
 
 # add ros setup to .bashrc to do autonatically when opening new bash shell
 RUN echo -e "source /opt/ros/noetic/setup.bash" >> $HOME/.bashrc

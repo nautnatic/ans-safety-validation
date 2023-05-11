@@ -14,21 +14,20 @@ from flatland.observation_action_spaces import (
     ActionDecoder,
     create_action_space,
 )
-from flatland.model_mediator import FlatlandWorldMediator, FlatlandModelMediator
+from flatland.model_mediator import FlatlandModelMediator
 from flatland.random_pose_generator import RandomBoxPoseGenerator
 
 
 class FlatlandEnv(Env):
-    def __init__(self, name: str = ""):
+    def __init__(self, name: str, max_steps_per_episode: int):
         super(FlatlandEnv, self).__init__()
         self.name = name
+        self.max_steps_per_episode = max_steps_per_episode
         self.current_episode = 0
         # steps only counted within one episode
         self.current_step = 0
-        self.max_steps_per_episode = 40
 
-        # create mediators for flatland
-        self.world = FlatlandWorldMediator(self)
+        # create models mediators
         self.robot = FlatlandModelMediator(
             model_name="robot",
             model_path="/home/user/src/training_coordinator/config/environment/models/robot.yaml",
@@ -68,8 +67,8 @@ class FlatlandEnv(Env):
             target_position_y=[1.0, 30.0],
         )
         self.action_space = create_action_space(
-            robot_linear_velocity_internal=[0.0, 5.0],
-            robot_angular_velocity_internal=[-math.pi/4, math.pi/4],
+            robot_linear_velocity_internal=[-5.0, 5.0],
+            robot_angular_velocity_internal=[-math.pi, math.pi],
         )
 
         # spawn models
@@ -84,14 +83,11 @@ class FlatlandEnv(Env):
         self.target.delete()
 
     def reset(self):
-        rospy.loginfo("Reset environment")
         self.current_step = 0
         self.current_episode = self.current_episode + 1
 
         self.robot.move_to_pose(self.spawn_strategy.get_pose())
         self.target.move_to_pose(self.spawn_strategy.get_pose())
-
-        self.world.step()
 
         rospy.sleep(0.5)
         observation = self.get_observation()
@@ -101,35 +97,27 @@ class FlatlandEnv(Env):
 
     def step(self, encoded_action):
         # setup for step
-        rospy.loginfo("1")
         next_action = self.decode_action(encoded_action)
 
-        rospy.loginfo("2")
         # execute action and get observation
         self.robot.set_target_speed(
             linear=next_action["linear"], angular=next_action["angular"]
         )
-        rospy.sleep(2)
-        rospy.loginfo("3")
-        self.world.step()
-        rospy.sleep(2)
-        rospy.loginfo("4")
+        rospy.sleep(0.5)
         observation = self.get_observation()
 
         # calculate step results
         reward = self.calculate_reward(observation)
         encoded_observation = self.encode_observation(observation)
         info = {}
-
+        
         # check if episode is done
-        if reward == 1.0 or self.current_step == self.max_steps_per_episode:
+        if reward > 0.0 or self.current_step == self.max_steps_per_episode:
             done = True
         else:
             done = False
 
         self.current_step = self.current_step + 1
-
-        rospy.loginfo(f"| Episode {self.current_episode:3d} | Step {self.current_step:3d} | Reward {reward:6.2f}")
 
         # return step results
         return (encoded_observation, reward, done, info)

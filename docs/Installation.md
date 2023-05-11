@@ -33,4 +33,7 @@ Basically, you need to execute 2 steps:
 * install the package or binary
 * hook direnv into your shell
 
-If you installed *direnv* successfully, you should see a message in the terminal, that the environment variables are loaded when you change the directory into the project root directory with `cd <projectRootDirectory>.
+## Configuration of environment variables
+You can find a `.envrc-template` file in the project root directory, which is a template containing all configurable environment variables and a comment with their meaning. You can copy this file to `.envrc` and configure it according to your environment.
+
+When direnv detects changes in the `.envrc` file, it requests to confirm the changes. To do that execute `direnv allow`. Now, you can use the environment variables in all terminal sessions started from within the root directory or one of its subdirectories.

@@ -1,4 +1,8 @@
+# own
 tmp
+behavior_models
+logs
+model_store
 
 # direnv
 .envrc
@@ -7,7 +11,3 @@ __pycache__
 # IntelliJ
 *.iml
 .idea/
-
-# other
-logs
-model_store
