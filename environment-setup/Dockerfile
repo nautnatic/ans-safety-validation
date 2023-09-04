@@ -48,7 +48,7 @@ WORKDIR $HOME
 
 # install python dependencies globally with pip
 RUN pip install --upgrade --no-cache-dir \
-    numpy stable-baselines3[extra] flake8 autopep8
+    numpy==1.24.4 stable-baselines3[extra]==1.8.0 flake8 autopep8
 
 # prepare catkin workspace (src directory contains packages)
 RUN mkdir -p $HOME/src/
